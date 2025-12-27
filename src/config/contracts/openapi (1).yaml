@@ -1,0 +1,37 @@
+---
+openapi: 3.1.0
+components:
+  schemas:
+    ExchangeRateDto:
+      type: object
+      properties:
+        fecha:
+          type: string
+        compra:
+          type: number
+          format: double
+        venta:
+          type: number
+          format: double
+        quota:
+          type: integer
+          format: int64
+paths:
+  /api/exchange-rate:
+    get:
+      operationId: getExchangeRate
+      parameters:
+      - name: dni
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeRateDto"
+info:
+  title: ms-exchangerate API
+  version: 1.0.0-SNAPSHOT

@@ -2,20 +2,8 @@
     "listPets": {
         "status": 200,
         "body": {
-            "pets": [
-                {
-                    "id": 1,
-                    "name": "Fido",
-                    "status": "available",
-                    "photoUrls": ["http://example.com/fido.jpg"]
-                },
-                {
-                    "id": 2,
-                    "name": "Whiskers",
-                    "status": "available",
-                    "photoUrls": ["http://example.com/whiskers.jpg"]
-                }
-            ]
+            "id": 99,
+            "name": "Mocked"
         }
     },
     "getPetById": {
@@ -24,7 +12,9 @@
             "id": 1,
             "name": "Fido",
             "status": "available",
-            "photoUrls": ["http://example.com/fido.jpg"]
+            "photoUrls": [
+                "http://example.com/fido.jpg"
+            ]
         }
     },
     "createPet": {

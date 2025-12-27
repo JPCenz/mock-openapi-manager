@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const config = require('./config/mocks-config.json');
+const serverConfig = require('./config/server-config.json');
 
 // Import routing modules from index.js
 const routes = require('./routes');
@@ -27,13 +28,21 @@ app.use((req, res, next) => {
 
 const API_PATH = '/api/';
 
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('/', (req, res) => res.redirect('/admin'));
+// Ensure /admin and /admin/ both serve the admin.html
+app.get(['/admin', '/admin/'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
 // Use the modules in the application
 app.use(API_PATH + 'config/:configName/custom-responses', routes.customResponsesRoutes);
 app.use(API_PATH + 'config', routes.configRoutes);
 app.use(API_PATH + 'contract', routes.contractRoutes);
 app.use(API_PATH + 'restart', routes.restartRoutes);
 
-const PORT = 5000;
+const PORT = process.env.PORT || serverConfig.port || 5000;
 
 // Función para imprimir todos los paths registrados
 function printAllRoutes(app) {

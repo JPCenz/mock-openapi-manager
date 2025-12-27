@@ -4,7 +4,7 @@
         "contract": "./config/contracts/petstore-openapi3.yaml",
         "port": 3001,
         "basePath": "/api/pets",
-        "enableCustomResponses": true,
+        "enableCustomResponses": false,
         "customResponses": "./config/custom-responses/pet-api-mock-responses.json"
     },
     {
@@ -13,5 +13,13 @@
         "port": 3004,
         "basePath": "/api/nuevo/paolo",
         "enableCustomResponses": false
+    },
+    {
+        "name": "opernapi1",
+        "contract": "sss",
+        "port": 30012,
+        "basePath": "/api/tests",
+        "enableCustomResponses": true,
+        "customResponses": ""
     }
 ]

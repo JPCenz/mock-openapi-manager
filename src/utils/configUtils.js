@@ -3,6 +3,12 @@ const path = require('path');
 
 const CONFIG_FILE = path.join(__dirname, '../config/mocks-config.json');
 const CUSTOM_RESPONSES_DIR = path.join(__dirname, '../config/custom-responses');
+const CUSTOM_RESPONSES_RELATIVE_PATH = './config/custom-responses';
+
+// Helper para construir la ruta relativa de un archivo de custom responses
+function getCustomResponsePath(configName) {
+    return `${CUSTOM_RESPONSES_RELATIVE_PATH}/${configName}-responses.json`;
+}
 
 // Asegurar que el directorio de custom responses existe
 function ensureCustomResponsesDir() {
@@ -11,13 +17,15 @@ function ensureCustomResponsesDir() {
     }
 }
 
-// Crear archivo de respuestas personalizadas vacío
+// Crear archivo de respuestas personalizadas vacío y devolver la ruta
 function createCustomResponseFile(configName) {
     ensureCustomResponsesDir();
     const filePath = path.join(CUSTOM_RESPONSES_DIR, `${configName}-responses.json`);
     if (!fs.existsSync(filePath)) {
         fs.writeFileSync(filePath, JSON.stringify({}, null, 4));
     }
+    // Devolver la ruta relativa usando la constante
+    return getCustomResponsePath(configName);
 }
 
 // Eliminar archivo de respuestas personalizadas
@@ -56,6 +64,18 @@ function getAllConfigs() {
     return readConfig();
 }
 
+// Limpiar objeto de actualizacion: solo incluir valores válidos
+function cleanUpdates(updates) {
+    const cleaned = {};
+    for (const [key, value] of Object.entries(updates)) {
+        // Solo incluir si no es null, undefined o string vacío
+        if (value !== null && value !== undefined && value !== '') {
+            cleaned[key] = value;
+        }
+    }
+    return cleaned;
+}
+
 // Obtener una configuración por nombre
 function getConfigByName(name) {
     const configs = readConfig();
@@ -77,16 +97,19 @@ function createConfig(newConfig) {
     if (!newConfig.port) throw new Error('El campo "port" es requerido');
     if (!newConfig.basePath) throw new Error('El campo "basePath" es requerido');
     
+    // Crear archivo de custom responses asociado y obtener su ruta
+    const customResponsesPath = createCustomResponseFile(newConfig.name);
+    
+    // Agregar la ruta al config si no está especificada
+    newConfig.customResponses = newConfig.customResponses || customResponsesPath;
+    
     configs.push(newConfig);
     saveConfig(configs);
-    
-    // Crear archivo de custom responses asociado
-    createCustomResponseFile(newConfig.name);
     
     return newConfig;
 }
 
-// Actualizar una configuración
+// Actualizar una configuración (partial update - solo campos válidos)
 function updateConfig(name, updates) {
     const configs = readConfig();
     const index = configs.findIndex(c => c.name === name);
@@ -95,25 +118,33 @@ function updateConfig(name, updates) {
         throw new Error(`Configuración "${name}" no encontrada`);
     }
     
-    // Si el nombre cambia, renombrar el archivo de custom responses
+    // Limpiar updates: solo campos válidos (no null, undefined o vacíos)
+    const cleanedUpdates = cleanUpdates(updates);
+    
+    // Si no hay campos válidos para actualizar
+    if (Object.keys(cleanedUpdates).length === 0) {
+        return configs[index];
+    }
+    
+    // Si el nombre cambia, validar que no exista ya
     const oldName = configs[index].name;
-    const newName = updates.name || oldName;
+    const newName = cleanedUpdates.name || oldName;
     
     if (oldName !== newName && configs.find(c => c.name === newName)) {
         throw new Error(`La configuración con nombre "${newName}" ya existe`);
     }
     
-    // Mantener campos no modificables y actualizar los nuevos
+    // Mezclar: mantener antiguo, sobrescribir solo con nuevos válidos
     const updatedConfig = {
         ...configs[index],
-        ...updates,
-        name: oldName // El nombre se puede cambiar pero lo manejamos manualmente
+        ...cleanedUpdates
     };
     
-    // Si el nombre cambió, actualizar el nombre en el config
+    // Si cambió el nombre, renombrar archivo de custom responses
     if (newName !== oldName) {
-        updatedConfig.name = newName;
         renameCustomResponseFile(oldName, newName);
+        // Actualizar también la ruta del archivo de custom responses
+        updatedConfig.customResponses = getCustomResponsePath(newName);
     }
     
     configs[index] = updatedConfig;
@@ -149,5 +180,8 @@ module.exports = {
     saveConfig,
     createCustomResponseFile,
     deleteCustomResponseFile,
-    renameCustomResponseFile
+    renameCustomResponseFile,
+    getCustomResponsePath,
+    CUSTOM_RESPONSES_RELATIVE_PATH,
+    cleanUpdates
 };
