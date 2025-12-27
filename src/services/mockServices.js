@@ -46,9 +46,7 @@ function createEndpointHandler(configName, operationId) {
                 return res.json(customResponse.body);
             }
             
-            // Si no hay respuesta personalizada, devolver un response default
-            const statusCode = customResponse?.status || 200;
-            return res.status(statusCode).json(customResponse?.body || { message: 'Mock response - customize in /api/config/:configName/custom-responses' });
+            return c.api.handlers.notImplemented(c, req, res);
         } catch (error) {
             console.error(`Error en handler para ${operationId}:`, error);
             return res.status(500).json({ error: error.message });
@@ -78,17 +76,39 @@ async function initializeMockServer(configName) {
         const api = new OpenAPIBackend({ definition: spec });
         
         // Registrar handlers para todos los paths y métodos
-        Object.entries(spec.paths).forEach(([path, pathItem]) => {
-            Object.entries(pathItem).forEach(([method, operation]) => {
-                // Saltar si no es un método HTTP válido
-                if (!['get', 'post', 'put', 'delete', 'patch', 'head', 'options'].includes(method.toLowerCase())) {
-                    return;
-                }
-                
-                const operationId = operation.operationId || `${method.toUpperCase()} ${path}`;
-                
-                // Registrar el handler
-                api.register(operationId, createEndpointHandler(configName, operationId));
+        if (config.enableCustomResponses) {
+            console.log(`⚙️  Habilitadas respuestas personalizadas para mock "${configName}"`);
+            Object.entries(spec.paths).forEach(([path, pathItem]) => {
+                Object.entries(pathItem).forEach(([method, operation]) => {
+                    // Saltar si no es un método HTTP válido
+                    if (!['get', 'post', 'put', 'delete', 'patch', 'head', 'options'].includes(method.toLowerCase())) {
+                        return;
+                    }
+                    
+                    const operationId = operation.operationId || `${method.toUpperCase()} ${path}`;
+                    
+                    // Registrar el handler
+                    api.register(operationId, createEndpointHandler(configName, operationId));
+                });
+        });
+        }
+
+        
+        // Registrar handler para operaciones no implementadas
+        api.register('notImplemented', (c, req, res) => {
+            const {status,mock} = c.api.mockResponseForOperation(c.operation.operationId);
+            if (mock) {
+                res.status(status).json(mock);
+            } else {
+                res.status(501).json({ error: `Operación "${c.operation.operationId}" no implementada en mock "${configName}"` });
+            }
+        });
+        
+        // Registrar handler para errores de validación
+        api.register('validationFail', (c, req, res) => {
+            res.status(400).json({
+                error: 'Validación fallida',
+                details: c.validation.errors || 'Error en la validación de la petición'
             });
         });
         

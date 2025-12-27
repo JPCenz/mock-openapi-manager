@@ -10,8 +10,8 @@
     {
         "name": "nuevo-mock",
         "contract": "./config/contracts/petstore-openapi3.yaml",
-        "port": 3002,
-        "basePath": "/api/nuevo",
+        "port": 3004,
+        "basePath": "/api/nuevo/paolo",
         "enableCustomResponses": false
     }
 ]

@@ -17,6 +17,15 @@ paths:
         - pets
       summary: List all pets
       operationId: listPets
+      parameters:
+        - name: X-Request-ID
+          in: header
+          required: true
+          description: Unique request identifier
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            example: "550e8400-e29b-41d4-a716-446655440000"
       responses:
         '200':
           description: A list of pets
@@ -26,11 +35,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pet'
+        '400':
+          description: Missing required header X-Request-ID
     post:
       tags:
         - pets
       summary: Create a new pet
       operationId: createPet
+      parameters:
+        - name: X-Request-ID
+          in: header
+          required: true
+          description: Unique request identifier
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            example: "550e8400-e29b-41d4-a716-446655440000"
       requestBody:
         required: true
         content:
@@ -44,6 +64,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+        '400':
+          description: Missing required header X-Request-ID
 
   /{petId}:
     get:
@@ -52,6 +74,14 @@ paths:
       summary: Get a pet by ID
       operationId: getPetById
       parameters:
+        - name: X-Request-ID
+          in: header
+          required: true
+          description: Unique request identifier
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            example: "550e8400-e29b-41d4-a716-446655440000"
         - name: petId
           in: path
           required: true
@@ -65,6 +95,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+        '400':
+          description: Missing required header X-Request-ID
         '404':
           description: Pet not found
 
@@ -74,6 +106,14 @@ paths:
       summary: Update a pet
       operationId: updatePet
       parameters:
+        - name: X-Request-ID
+          in: header
+          required: true
+          description: Unique request identifier
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            example: "550e8400-e29b-41d4-a716-446655440000"
         - name: petId
           in: path
           required: true
@@ -93,6 +133,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+        '400':
+          description: Missing required header X-Request-ID
 
     delete:
       tags:
@@ -100,6 +142,14 @@ paths:
       summary: Delete a pet
       operationId: deletePet
       parameters:
+        - name: X-Request-ID
+          in: header
+          required: true
+          description: Unique request identifier
+          schema:
+            type: string
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            example: "550e8400-e29b-41d4-a716-446655440000"
         - name: petId
           in: path
           required: true
@@ -109,6 +159,8 @@ paths:
       responses:
         '204':
           description: Pet deleted successfully
+        '400':
+          description: Missing required header X-Request-ID
 
 components:
   schemas:
