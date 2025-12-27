@@ -1,0 +1,11 @@
+{
+    "getPets": {
+        "status": 200,
+        "body": {
+            "pets": [
+                { "id": 1, "name": "Fido", "type": "dog" },
+                { "id": 2, "name": "Whiskers", "type": "cat" }
+            ]
+        }
+    }
+}

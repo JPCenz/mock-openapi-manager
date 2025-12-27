@@ -1,0 +1,24 @@
+[
+    {
+        "name": "pet-api-mock",
+        "contract": "./api/nuevo.yaml",
+        "port": 3034,
+        "basePath": "/api/nuevo",
+        "enableCustomResponses": true,
+        "customResponses": "./config/custom-response/pet-resssponses.json"
+    },
+    {
+        "name": "nuevo-mock",
+        "contract": "./api/nuevo.yaml",
+        "port": 3002,
+        "basePath": "/api/nuevo",
+        "enableCustomResponses": false
+    },
+    {
+        "name": "nuevo-mock2",
+        "contract": "./api/nuevo.yaml",
+        "port": 3002,
+        "basePath": "/api/nuevo",
+        "enableCustomResponses": false
+    }
+]
