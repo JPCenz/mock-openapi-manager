@@ -1,22 +1,15 @@
 [
     {
         "name": "pet-api-mock",
-        "contract": "./api/nuevo.yaml",
-        "port": 3034,
-        "basePath": "/api/nuevo",
+        "contract": "./config/contracts/petstore-openapi3.yaml",
+        "port": 3001,
+        "basePath": "/api/pets",
         "enableCustomResponses": true,
-        "customResponses": "./config/custom-response/pet-resssponses.json"
+        "customResponses": "./config/custom-responses/pet-api-mock-responses.json"
     },
     {
         "name": "nuevo-mock",
-        "contract": "./api/nuevo.yaml",
-        "port": 3002,
-        "basePath": "/api/nuevo",
-        "enableCustomResponses": false
-    },
-    {
-        "name": "nuevo-mock2",
-        "contract": "./api/nuevo.yaml",
+        "contract": "./config/contracts/petstore-openapi3.yaml",
         "port": 3002,
         "basePath": "/api/nuevo",
         "enableCustomResponses": false

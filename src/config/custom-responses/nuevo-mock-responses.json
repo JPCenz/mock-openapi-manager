@@ -1,29 +1,11 @@
 {
-    "getPets": {
-        "status": 200,
+     "createPet": {
+        "status": 400,
         "body": {
-            "pets": [
-                {
-                    "id": 1,
-                    "name": "Fido",
-                    "type": "dog"
-                },
-                {
-                    "id": 2,
-                    "name": "Whiskers",
-                    "type": "cat"
-                }
-            ]
-        }
-    },
-    "post": {
-        "status": 429,
-        "body": {
-            "name": "nuevo-mocksssss",
-            "contract": "./api/nuevo.yaml",
-            "port": 3002,
-            "basePath": "/api/nuevo",
-            "enableCustomResponses": false
+            "id": 3,
+            "name": "HOLA",
+            "status": "available",
+            "photoUrls": []
         }
     }
 }

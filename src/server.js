@@ -6,6 +6,9 @@ const config = require('./config/mocks-config.json');
 // Import routing modules from index.js
 const routes = require('./routes');
 
+// Import mock services
+const mockServices = require('./services/mockServices');
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -66,9 +69,12 @@ function printAllRoutes(app) {
     console.log('\n======================\n');
 }
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
     console.log("app listening on port: " + PORT);
     printAllRoutes(app);
+    
+    // Inicializar todos los mocks
+    await mockServices.initializeAllMocks();
 });
 
 // Registrar la instancia del servidor en el controlador de restart
