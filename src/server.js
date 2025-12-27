@@ -79,8 +79,8 @@ function printAllRoutes(app) {
 }
 
 const server = app.listen(PORT, async () => {
-    console.log("app listening on port: " + PORT);
-    printAllRoutes(app);
+    console.log(`Servidor iniciado en http://localhost:${PORT}`);
+    //printAllRoutes(app);
     
     // Inicializar todos los mocks
     await mockServices.initializeAllMocks();
