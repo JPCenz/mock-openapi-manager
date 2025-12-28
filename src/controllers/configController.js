@@ -1,4 +1,47 @@
+const fs = require('fs');
+const path = require('path');
 const configUtils = require('../utils/configUtils');
+
+// Normaliza el campo "contract":
+// - Si se provee una ruta válida fuera de contractsDir, copia el archivo al directorio de contratos configurado
+// - Si ya existe en contractsDir, usa ese
+// - Devuelve siempre solo el nombre de archivo
+function normalizeContractField(contract) {
+    if (!contract) return contract;
+
+    const { CONTRACTS_DIR } = configUtils.getStoragePaths();
+    const filename = path.basename(contract);
+    const destPath = path.join(CONTRACTS_DIR, filename);
+
+    // Candidato A: ruta relativa/absoluta respecto a src/
+    const candidateA = path.resolve(__dirname, '../', contract);
+    if (fs.existsSync(candidateA)) {
+        if (!fs.existsSync(destPath)) {
+            const dir = path.dirname(destPath);
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            fs.copyFileSync(candidateA, destPath);
+        }
+        return filename;
+    }
+
+    // Candidato B: ya existe en el directorio de contratos
+    if (fs.existsSync(destPath)) {
+        return filename;
+    }
+
+    // Candidato C: ruta absoluta fuera de src
+    if (path.isAbsolute(contract) && fs.existsSync(contract)) {
+        if (!fs.existsSync(destPath)) {
+            const dir = path.dirname(destPath);
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            fs.copyFileSync(contract, destPath);
+        }
+        return filename;
+    }
+
+    // No existe el archivo en ninguna ruta conocida
+    throw new Error(`Archivo de contrato no encontrado: ${contract}. Colócalo en la carpeta de contratos o proporciona una ruta válida.`);
+}
 
 // GET - Obtener todas las configuraciones
 exports.getAllConfigs = (req, res) => {
@@ -55,6 +98,9 @@ exports.createConfig = (req, res) => {
             });
         }
         
+        // Normalizar contrato
+        newConfig.contract = normalizeContractField(newConfig.contract);
+
         const config = configUtils.createConfig(newConfig);
         res.status(201).json({
             success: true,
@@ -74,6 +120,11 @@ exports.updateConfig = (req, res) => {
     try {
         const { name } = req.params;
         const updates = req.body;
+
+        // Normalizar contrato si viene en la actualización
+        if (updates && updates.contract) {
+            updates.contract = normalizeContractField(updates.contract);
+        }
         
         const config = configUtils.updateConfig(name, updates);
         const message = updates.name && updates.name !== name 

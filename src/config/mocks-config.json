@@ -21,5 +21,21 @@
         "basePath": "/api/tests",
         "enableCustomResponses": true,
         "customResponses": ""
+    },
+    {
+        "name": "tmpCfg",
+        "contract": "tmp2.yaml",
+        "port": 9000,
+        "basePath": "/",
+        "enableCustomResponses": true,
+        "customResponses": "./config/custom-responses/tmpCfg-responses.json"
+    },
+    {
+        "name": "tmpCfg3",
+        "contract": "tmp3.yaml",
+        "port": 9001,
+        "basePath": "/",
+        "enableCustomResponses": true,
+        "customResponses": "./config/custom-responses/tmpCfg3-responses.json"
     }
 ]

@@ -2,19 +2,23 @@ const fs = require('fs');
 const path = require('path');
 const configUtils = require('./configUtils');
 
-const CUSTOM_RESPONSES_DIR = path.join(__dirname, '../config/custom-responses');
+function getCustomResponsesDir() {
+    const { CUSTOM_RESPONSES_DIR } = configUtils.getStoragePaths();
+    return CUSTOM_RESPONSES_DIR;
+}
 
 // Asegurar que el directorio existe
 function ensureCustomResponsesDir() {
-    if (!fs.existsSync(CUSTOM_RESPONSES_DIR)) {
-        fs.mkdirSync(CUSTOM_RESPONSES_DIR, { recursive: true });
+    const dir = getCustomResponsesDir();
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
     }
 }
 
 // Obtener el archivo de respuestas personalizadas para una configuración
 function getCustomResponseFile(configName) {
     ensureCustomResponsesDir();
-    return path.join(CUSTOM_RESPONSES_DIR, `${configName}-responses.json`);
+    return path.join(getCustomResponsesDir(), `${configName}-responses.json`);
 }
 
 // Leer respuestas personalizadas de una configuración

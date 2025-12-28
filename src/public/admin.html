@@ -41,7 +41,7 @@
           <label>name</label>
           <input id="cfgName" placeholder="pet-api-mock" />
           <label>contract (ruta YAML)</label>
-          <input id="cfgContract" placeholder="./config/contracts/petstore-openapi3.yaml" />
+          <input id="cfgContract" placeholder="petstore-openapi3.yaml" />
           <label>port</label>
           <input id="cfgPort" type="number" value="3001" />
         </div>
@@ -50,8 +50,6 @@
           <input id="cfgBasePath" placeholder="/api/pets" />
           <label>enableCustomResponses</label>
           <select id="cfgEnableCR"><option value="true">true</option><option value="false">false</option></select>
-          <label>customResponses (ruta JSON)</label>
-          <input id="cfgCRPath" placeholder="./config/custom-responses/pet-api-mock-responses.json" />
         </div>
       </div>
       <div class="row">
@@ -100,12 +98,15 @@
       <input id="restartName" placeholder="pet-api-mock" />
       <div class="row">
         <button id="btnRestartMock">Reiniciar mock</button>
-        <button id="btnRestartAllMocks">Reiniciar todos</button>
+         <button id="btnRestartAllMocks">Reiniciar todos</button>
         <button id="btnRestartServer">Reiniciar servidor</button>
       </div>
       <pre id="rstOut"></pre>
     </section>
   </main>
+  <footer style="border-top:1px solid #ddd; padding:12px 16px; color:#666; font-size:12px;">
+    © 2025 jcenzang · Ver licencia: <a href="/LICENSE" target="_blank" rel="noopener">LICENSE</a>
+  </footer>
 
   <script>
     const base = '/api';
@@ -260,6 +261,9 @@
       const name = document.getElementById('restartName').value;
       const r = await fetch(`${base}/restart/mock/${encodeURIComponent(name)}`, { method:'POST' });
       out(rstOut, await r.json());
+    };
+    document.getElementById('btnRestartAll').onclick = async () => {
+      const r = await fetch(`${base}/restart/mocks/all`, { method:'POST' }); out(rstOut, await r.json());
     };
     document.getElementById('btnRestartAllMocks').onclick = async () => {
       const r = await fetch(`${base}/restart/mocks/all`, { method:'POST' }); out(rstOut, await r.json());

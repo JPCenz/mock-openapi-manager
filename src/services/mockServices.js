@@ -15,7 +15,22 @@ const mockApps = new Map();
  */
 function parseContract(contractPath) {
     try {
-        const absolutePath = path.resolve(__dirname, '../', contractPath);
+        let absolutePath;
+        // Si es ruta absoluta o relativa existente respecto a src/
+        const candidateA = path.resolve(__dirname, '../', contractPath);
+        if (fs.existsSync(candidateA)) {
+            absolutePath = candidateA;
+        } else {
+            // Probar en el directorio de contratos configurado
+            const { CONTRACTS_DIR } = configUtils.getStoragePaths();
+            const candidateB = path.join(CONTRACTS_DIR, path.basename(contractPath));
+            if (fs.existsSync(candidateB)) {
+                absolutePath = candidateB;
+            } else {
+                throw new Error(`Archivo de contrato no encontrado: ${contractPath}`);
+            }
+        }
+
         const fileContent = fs.readFileSync(absolutePath, 'utf8');
         const spec = YAML.load(fileContent);
         return spec;

@@ -1,26 +1,31 @@
 const fs = require('fs');
 const path = require('path');
+const configUtils = require('./configUtils');
 
-const CONTRACTS_DIR = path.join(__dirname, '../config/contracts');
+function getContractsDir() {
+    const { CONTRACTS_DIR } = configUtils.getStoragePaths();
+    return CONTRACTS_DIR;
+}
 
 // Asegurar que el directorio de contratos existe
 function ensureContractsDir() {
-    if (!fs.existsSync(CONTRACTS_DIR)) {
-        fs.mkdirSync(CONTRACTS_DIR, { recursive: true });
+    const dir = getContractsDir();
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
     }
 }
 
 // Guardar un archivo de contrato
 function saveContract(filename, content) {
     ensureContractsDir();
-    const filePath = path.join(CONTRACTS_DIR, filename);
+    const filePath = path.join(getContractsDir(), filename);
     fs.writeFileSync(filePath, content);
     return filePath;
 }
 
 // Leer un contrato específico
 function readContract(filename) {
-    const filePath = path.join(CONTRACTS_DIR, filename);
+    const filePath = path.join(getContractsDir(), filename);
     if (!fs.existsSync(filePath)) {
         throw new Error(`Contrato no encontrado: ${filename}`);
     }
@@ -30,13 +35,13 @@ function readContract(filename) {
 // Listar todos los contratos
 function listContracts() {
     ensureContractsDir();
-    const files = fs.readdirSync(CONTRACTS_DIR);
+    const files = fs.readdirSync(getContractsDir());
     return files.filter(file => file.endsWith('.yaml') || file.endsWith('.yml'));
 }
 
 // Eliminar un contrato
 function deleteContract(filename) {
-    const filePath = path.join(CONTRACTS_DIR, filename);
+    const filePath = path.join(getContractsDir(), filename);
     if (!fs.existsSync(filePath)) {
         throw new Error(`Contrato no encontrado: ${filename}`);
     }
@@ -45,7 +50,7 @@ function deleteContract(filename) {
 
 // Actualizar un contrato
 function updateContract(filename, content) {
-    const filePath = path.join(CONTRACTS_DIR, filename);
+    const filePath = path.join(getContractsDir(), filename);
     if (!fs.existsSync(filePath)) {
         throw new Error(`Contrato no encontrado: ${filename}`);
     }
@@ -59,5 +64,5 @@ module.exports = {
     listContracts,
     deleteContract,
     updateContract,
-    CONTRACTS_DIR
+    getContractsDir
 };

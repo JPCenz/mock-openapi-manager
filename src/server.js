@@ -9,6 +9,7 @@ const routes = require('./routes');
 
 // Import mock services
 const mockServices = require('./services/mockServices');
+const configUtils = require('./utils/configUtils');
 
 // Middleware
 app.use(express.json());
@@ -81,6 +82,11 @@ function printAllRoutes(app) {
 const server = app.listen(PORT, async () => {
     console.log(`Servidor iniciado en http://localhost:${PORT}`);
     //printAllRoutes(app);
+    const { CONFIG_FILE, CONTRACTS_DIR, CUSTOM_RESPONSES_DIR } = configUtils.getStoragePaths();
+    console.log('📂 Storage paths configurados:');
+    console.log(`   Configs: ${CONFIG_FILE}`);
+    console.log(`   Contracts: ${CONTRACTS_DIR}`);
+    console.log(`   Custom Responses: ${CUSTOM_RESPONSES_DIR}`);
     
     // Inicializar todos los mocks
     await mockServices.initializeAllMocks();

@@ -1,17 +1,59 @@
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_FILE = path.join(__dirname, '../config/mocks-config.json');
-const CUSTOM_RESPONSES_DIR = path.join(__dirname, '../config/custom-responses');
-const CUSTOM_RESPONSES_RELATIVE_PATH = './config/custom-responses';
+// Carga de server-config para rutas configurables
+const SERVER_CONFIG_FILE = path.join(__dirname, '../config/server-config.json');
+
+function readServerConfig() {
+    try {
+        const raw = fs.readFileSync(SERVER_CONFIG_FILE, 'utf-8');
+        return JSON.parse(raw);
+    } catch (e) {
+        return { storage: {} };
+    }
+}
+
+function getStoragePaths() {
+    const serverConfig = readServerConfig();
+    const storage = serverConfig.storage || {};
+
+    // baseDir relativo a src/
+    const baseDir = storage.baseDir
+        ? path.resolve(__dirname, '../', storage.baseDir)
+        : path.join(__dirname, '../config');
+
+    const CONFIG_FILE = storage.configsFile
+        ? path.join(baseDir, storage.configsFile)
+        : path.join(__dirname, '../config/mocks-config.json');
+
+    const CUSTOM_RESPONSES_DIR = storage.customResponsesDir
+        ? path.join(baseDir, storage.customResponsesDir)
+        : path.join(__dirname, '../config/custom-responses');
+
+    const CONTRACTS_DIR = storage.contractsDir
+        ? path.join(baseDir, storage.contractsDir)
+        : path.join(__dirname, '../config/contracts');
+
+    // Ruta para guardar referencia en config (para UI / lectura humana)
+    const projectRoot = path.resolve(__dirname, '../');
+    const rel = path.relative(projectRoot, CUSTOM_RESPONSES_DIR);
+    const isOutsideProject = rel.startsWith('..');
+    const customResponsesPath = isOutsideProject
+        ? CUSTOM_RESPONSES_DIR.replace(/\\/g, '/')
+        : `./${rel.replace(/\\/g, '/')}`;
+
+    return { CONFIG_FILE, CUSTOM_RESPONSES_DIR, CONTRACTS_DIR, CUSTOM_RESPONSES_RELATIVE_PATH: customResponsesPath };
+}
 
 // Helper para construir la ruta relativa de un archivo de custom responses
 function getCustomResponsePath(configName) {
+    const { CUSTOM_RESPONSES_RELATIVE_PATH } = getStoragePaths();
     return `${CUSTOM_RESPONSES_RELATIVE_PATH}/${configName}-responses.json`;
 }
 
 // Asegurar que el directorio de custom responses existe
 function ensureCustomResponsesDir() {
+    const { CUSTOM_RESPONSES_DIR } = getStoragePaths();
     if (!fs.existsSync(CUSTOM_RESPONSES_DIR)) {
         fs.mkdirSync(CUSTOM_RESPONSES_DIR, { recursive: true });
     }
@@ -20,6 +62,7 @@ function ensureCustomResponsesDir() {
 // Crear archivo de respuestas personalizadas vacío y devolver la ruta
 function createCustomResponseFile(configName) {
     ensureCustomResponsesDir();
+    const { CUSTOM_RESPONSES_DIR } = getStoragePaths();
     const filePath = path.join(CUSTOM_RESPONSES_DIR, `${configName}-responses.json`);
     if (!fs.existsSync(filePath)) {
         fs.writeFileSync(filePath, JSON.stringify({}, null, 4));
@@ -30,6 +73,7 @@ function createCustomResponseFile(configName) {
 
 // Eliminar archivo de respuestas personalizadas
 function deleteCustomResponseFile(configName) {
+    const { CUSTOM_RESPONSES_DIR } = getStoragePaths();
     const filePath = path.join(CUSTOM_RESPONSES_DIR, `${configName}-responses.json`);
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
@@ -38,6 +82,7 @@ function deleteCustomResponseFile(configName) {
 
 // Renombrar archivo de respuestas personalizadas
 function renameCustomResponseFile(oldName, newName) {
+    const { CUSTOM_RESPONSES_DIR } = getStoragePaths();
     const oldPath = path.join(CUSTOM_RESPONSES_DIR, `${oldName}-responses.json`);
     const newPath = path.join(CUSTOM_RESPONSES_DIR, `${newName}-responses.json`);
     if (fs.existsSync(oldPath)) {
@@ -47,6 +92,7 @@ function renameCustomResponseFile(oldName, newName) {
 
 // Leer la configuración actual
 function readConfig() {
+    const { CONFIG_FILE } = getStoragePaths();
     if (!fs.existsSync(CONFIG_FILE)) {
         return [];
     }
@@ -56,6 +102,11 @@ function readConfig() {
 
 // Guardar la configuración
 function saveConfig(config) {
+    const { CONFIG_FILE } = getStoragePaths();
+    const dir = path.dirname(CONFIG_FILE);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 4));
 }
 
@@ -182,6 +233,8 @@ module.exports = {
     deleteCustomResponseFile,
     renameCustomResponseFile,
     getCustomResponsePath,
-    CUSTOM_RESPONSES_RELATIVE_PATH,
+    // Exponer resolución de paths para otros módulos
+    getStoragePaths,
+    CUSTOM_RESPONSES_RELATIVE_PATH: getStoragePaths().CUSTOM_RESPONSES_RELATIVE_PATH,
     cleanUpdates
 };
