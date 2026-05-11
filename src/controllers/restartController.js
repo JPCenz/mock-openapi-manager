@@ -39,6 +39,8 @@ exports.restartAllMocks = async (req, res) => {
     try {
         // Detener todos los mocks
         await mockServices.stopAllMocks();
+        console.log('\n⚠️ REINICIANDO TODOS LOS MOCK SERVERS...\n');
+        
         
         // Reiniciar todos
         const result = await mockServices.initializeAllMocks();

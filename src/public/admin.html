@@ -5,48 +5,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mock Manager - Admin</title>
   <script src="/ajv-bundle.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
   <style>
-    :root { font-size: 14px; }
-    main.container { max-width: 1400px; }
-    .grid { grid-template-columns: 1fr 1fr; gap: var(--pico-spacing); }
+    :root {
+      font-size: 14px;
+      --pico-primary: #0284c7;
+      --pico-primary-hover: #0369a1;
+      --pico-primary-focus: rgba(2, 132, 199, 0.2);
+      --pico-secondary: #0f766e;
+      --pico-secondary-hover: #115e59;
+      --pico-secondary-focus: rgba(15, 118, 110, 0.2);
+      --pico-muted-border-color: #bae6fd;
+      --pico-card-border-color: #cffafe;
+      --pico-card-background-color: #ffffffd9;
+      --pico-font-family: 'Space Grotesk', sans-serif;
+      --pico-form-element-spacing-vertical: 0.55rem;
+      --pico-form-element-spacing-horizontal: 0.7rem;
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% -20%, #7dd3fc 0%, transparent 45%),
+        radial-gradient(circle at 95% 0%, #a7f3d0 0%, transparent 40%),
+        linear-gradient(120deg, #f5fbff 0%, #ecfeff 48%, #f0fdf4 100%);
+    }
+    main.container { max-width: 1360px; }
+    .admin-grid { grid-template-columns: 1fr 1fr; gap: var(--pico-spacing); }
+    .hero-banner {
+      margin-top: 1rem;
+      margin-bottom: 1.25rem;
+      padding: 1.3rem;
+      border-radius: var(--pico-border-radius);
+      border: 1px solid var(--pico-card-border-color);
+      background: linear-gradient(140deg, #e0f2fecc 0%, #d1fae5bf 60%, #fef3c7b8 100%);
+      box-shadow: 0 10px 28px rgba(3, 105, 161, 0.12);
+    }
+    .hero-banner hgroup { margin-bottom: 0.75rem; }
+    .hero-banner p { margin-bottom: 0; max-width: 72ch; }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .hero-meta small {
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--pico-muted-border-color);
+      background: #ffffffd6;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
     .output { 
-      background: var(--pico-code-background-color);
+      background: #081221;
+      color: #dbeafe;
       padding: var(--pico-spacing);
       border-radius: var(--pico-border-radius);
       overflow: auto;
       max-height: 300px;
       font-size: 0.813rem;
+      border: 1px solid #0ea5e966;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    #crBody {
+      min-height: 300px;
+      max-height: none;
+      resize: vertical;
     }
     article { margin-bottom: var(--pico-spacing); }
-    article header { font-size: 1rem; padding: 0.5rem 1rem; }
-    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.25rem; }
     hgroup p { font-size: 0.875rem; margin: 0; }
     label { font-size: 0.875rem; }
     input, select, textarea { font-size: 0.875rem; }
-    button { font-size: 0.875rem; padding: 0.5rem 1rem; }
+    button { font-size: 0.875rem; }
     .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .btn-group-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
-    footer { text-align: center; padding: var(--pico-spacing); border-top: 1px solid var(--pico-muted-border-color); font-size: 0.813rem; }
+    details summary { font-weight: 600; }
+    footer {
+      text-align: center;
+      padding: var(--pico-spacing);
+      border-top: 1px solid #bae6fd;
+      font-size: 0.813rem;
+      background: #ffffff91;
+      backdrop-filter: blur(3px);
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
     table { font-size: 0.875rem; }
     table button { margin: 0; padding: 0.25rem 0.5rem; font-size: 0.813rem; }
+    @media (max-width: 980px) {
+      .admin-grid,
+      .grid,
+      .btn-group,
+      .btn-group-3 {
+        grid-template-columns: 1fr;
+      }
+      .hero-banner { padding: 1rem; }
+      h1 { font-size: 1.45rem; }
+    }
   </style>
 </head>
 <body>
   <header class="container">
-    <hgroup>
-      <h1>Mock Manager Admin</h1>
-      <p>Gestión centralizada de mocks OpenAPI</p>
-    </hgroup>
+    <section class="hero-banner">
+      <hgroup>
+        <h1>Mock Manager Admin</h1>
+        <p>Control centralizado para contratos OpenAPI, respuestas custom y reinicios con feedback inmediato.</p>
+      </hgroup>
+      <div class="hero-meta" aria-label="Indicadores rápidos">
+        <small>OpenAPI Ops</small>
+        <small>Custom Responses</small>
+        <small>Restart Controls</small>
+      </div>
+    </section>
   </header>
   <main class="container">
-    <div class="grid">
+    <div class="grid admin-grid">
       <!-- Configuraciones -->
       <article>
-        <header><strong>📋 Configuraciones</strong></header>
+        <header><strong>📋 Configuraciones de Mocks</strong></header>
         <div class="btn-group" style="margin-bottom: 1rem;">
-          <button id="btnLoadConfigs">Cargar configuraciones</button>
-          <button id="btnRestartAll" class="secondary">Reiniciar todos</button>
+          <button id="btnLoadConfigs">Cargar mocks</button>
+          <button id="btnRestartAll" class="secondary">Reiniciar todos 🔄 </button>
         </div>
         <figure>
           <table id="tblConfigs" role="grid">
@@ -63,8 +146,8 @@
           </table>
         </figure>
         
-        <details>
-          <summary role="button" class="secondary">Crear / Actualizar configuración</summary>
+        <details id="cfgEditor">
+          <summary id="cfgEditorSummary" role="button" class="secondary">Crear / Actualizar configuración</summary>
           <div class="grid">
             <label>
               Name
@@ -117,6 +200,7 @@
           <input id="contractName" placeholder="petstore-openapi3.yaml" />
         </label>
         <button id="btnGetContract" class="secondary">Descargar/Ver contrato</button>
+        <p></p>
         <pre id="contractOut" class="output"></pre>
       </article>
 
@@ -124,7 +208,7 @@
       <article>
         <header><strong>🎨 Custom Responses</strong></header>
         <label>
-          Config Name
+          Mock Configuration Name
           <input id="crConfig" placeholder="pet-api-mock" />
         </label>
         <label>
@@ -133,7 +217,7 @@
         </label>
         <label>
           Response JSON
-          <textarea id="crBody" rows="6">{
+          <textarea id="crBody" class="output" rows="6">{
   "status": 400,
   "body": 
 	{
@@ -158,19 +242,18 @@
       </article>
 
       <!-- Reiniciar -->
-      <article>
+      <!-- <article>
         <header><strong>🔄 Reiniciar</strong></header>
         <label>
           Config Name
           <input id="restartName" placeholder="pet-api-mock" />
         </label>
-        <button id="btnRestartMock">Reiniciar mock específico</button>
-        <div class="btn-group">
+        <div class="grid" style="grid-template-columns: 1fr; gap: 0.6rem;">
+          <button id="btnRestartMock">Reiniciar mock específico</button>
           <button id="btnRestartAllMocks" class="secondary">Reiniciar todos los mocks</button>
-
         </div>
         <pre id="rstOut" class="output"></pre>
-      </article>
+      </article> -->
     </div>
   
   <footer class="container">
@@ -240,8 +323,10 @@
           document.getElementById('cfgBasePath').value = config.basePath;
           document.getElementById('cfgEnableCR').value = config.enableCustomResponses === true ? 'true' : 'false';
           //document.getElementById('cfgCRPath').value = config.customResponses || '';
-          // Scroll al formulario
-          document.querySelector('h3').scrollIntoView({ behavior: 'smooth' });
+          const editor = document.getElementById('cfgEditor');
+          if (editor) editor.open = true;
+          const summary = document.getElementById('cfgEditorSummary');
+          if (summary) summary.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       });
     }
@@ -325,21 +410,26 @@
     };
 
     // Restart
-    const rstOut = document.getElementById('rstOut');
-    document.getElementById('btnRestartMock').onclick = async () => {
-      const name = document.getElementById('restartName').value;
-      const r = await fetch(`${base}/restart/mock/${encodeURIComponent(name)}`, { method:'POST' });
-      out(rstOut, await r.json());
-    };
+    const rstOut = document.getElementById('cfgOut');
+    // document.getElementById('btnRestartMock').onclick = async () => {
+    //   const name = document.getElementById('restartName').value;
+    //   const r = await fetch(`${base}/restart/mock/${encodeURIComponent(name)}`, { method:'POST' });
+    //   out(rstOut, await r.json());
+    // };
     document.getElementById('btnRestartAll').onclick = async () => {
+      console.log('Reiniciando todos los mocks...'); // Log adicional para claridad
       const r = await fetch(`${base}/restart/mocks/all`, { method:'POST' }); out(rstOut, await r.json());
     };
     document.getElementById('btnRestartAllMocks').onclick = async () => {
+      console.log('Reiniciando todos los mocks...'); // Log adicional para claridad
       const r = await fetch(`${base}/restart/mocks/all`, { method:'POST' }); out(rstOut, await r.json());
     };
-    document.getElementById('btnRestartServer').onclick = async () => {
-      const r = await fetch(`${base}/restart`, { method:'POST' }); out(rstOut, await r.json());
-    };
+    const restartServerBtn = document.getElementById('btnRestartServer');
+    if (restartServerBtn) {
+      restartServerBtn.onclick = async () => {
+        const r = await fetch(`${base}/restart`, { method:'POST' }); out(rstOut, await r.json());
+      };
+    }
   </script>
 </body>
 </html>
