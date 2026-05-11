@@ -128,7 +128,7 @@
       <article>
         <header><strong>📋 Configuraciones de Mocks</strong></header>
         <div class="btn-group" style="margin-bottom: 1rem;">
-          <button id="btnLoadConfigs">Cargar mocks</button>
+          <button id="btnLoadConfigs">Refrescar mocks</button>
           <button id="btnRestartAll" class="secondary">Reiniciar todos 🔄 </button>
         </div>
         <figure>
@@ -347,7 +347,15 @@
         //customResponses: document.getElementById('cfgCRPath').value
       };
       const r = await fetch(`${base}/config/`, { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)});
-      out(cfgOut, await r.json());
+      const result = await r.json();
+      
+      // Manejar error de puerto duplicado
+      if (r.status === 409) {
+        out(cfgOut, { error: result.error, status: 409, message: 'Conflicto: Puerto ya está en uso' });
+        return;
+      }
+      
+      out(cfgOut, result);
     };
     document.getElementById('btnUpdateCfg').onclick = async () => {
       const name = document.getElementById('cfgName').value;
@@ -359,7 +367,15 @@
         //customResponses: document.getElementById('cfgCRPath').value
       };
       const r = await fetch(`${base}/config/${encodeURIComponent(name)}`, { method:'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)});
-      out(cfgOut, await r.json());
+      const result = await r.json();
+      
+      // Manejar error de puerto duplicado
+      if (r.status === 409) {
+        out(cfgOut, { error: result.error, status: 409, message: 'Conflicto: Puerto ya está en uso' });
+        return;
+      }
+      
+      out(cfgOut, result);
     };
     document.getElementById('btnDeleteCfg').onclick = async () => {
       const name = document.getElementById('cfgName').value;

@@ -108,7 +108,9 @@ exports.createConfig = (req, res) => {
             data: config
         });
     } catch (error) {
-        res.status(400).json({
+        // Diferenciar errores de puerto duplicado (409 Conflict)
+        const statusCode = error.message.includes('puerto') ? 409 : 400;
+        res.status(statusCode).json({
             success: false,
             error: error.message
         });
@@ -143,7 +145,9 @@ exports.updateConfig = (req, res) => {
                 error: error.message
             });
         }
-        res.status(400).json({
+        // Diferenciar errores de puerto duplicado (409 Conflict)
+        const statusCode = error.message.includes('puerto') ? 409 : 400;
+        res.status(statusCode).json({
             success: false,
             error: error.message
         });

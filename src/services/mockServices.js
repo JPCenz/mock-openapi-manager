@@ -70,6 +70,40 @@ function createEndpointHandler(configName, operationId) {
 }
 
 /**
+ * Obtener todos los puertos en uso en servidores ya inicializados
+ */
+function getUsedPorts() {
+    const usedPorts = new Set();
+    for (const [configName, server] of mockServers) {
+        const config = configUtils.getConfigByName(configName);
+        if (config) {
+            usedPorts.add(config.port);
+        }
+    }
+    return usedPorts;
+}
+
+/**
+ * Validar que el puerto no esté ya en uso por otra configuración
+ */
+function validatePortAvailability(configName, port) {
+    const configs = configUtils.getAllConfigs();
+    for (const config of configs) {
+        // Saltar la configuración actual
+        if (config.name === configName) continue;
+        
+        // Verificar si el puerto ya está en uso
+        if (config.port === port) {
+            return {
+                valid: false,
+                message: `Puerto ${port} ya está siendo usado por la configuración "${config.name}"`
+            };
+        }
+    }
+    return { valid: true };
+}
+
+/**
  * Inicializar un servidor mock para una configuración
  */
 async function initializeMockServer(configName) {
@@ -78,6 +112,12 @@ async function initializeMockServer(configName) {
         
         if (!config) {
             throw new Error(`Configuración "${configName}" no encontrada`);
+        }
+        
+        // Validar disponibilidad del puerto
+        const portValidation = validatePortAvailability(configName, config.port);
+        if (!portValidation.valid) {
+            throw new Error(portValidation.message);
         }
         
         // Parsear el contrato YAML

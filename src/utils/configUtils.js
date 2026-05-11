@@ -148,6 +148,11 @@ function createConfig(newConfig) {
     if (!newConfig.port) throw new Error('El campo "port" es requerido');
     if (!newConfig.basePath) throw new Error('El campo "basePath" es requerido');
     
+    // Validar que el puerto sea único
+    if (configs.find(c => c.port === newConfig.port)) {
+        throw new Error(`Ya existe una configuración usando el puerto ${newConfig.port}`);
+    }
+    
     // Crear archivo de custom responses asociado y obtener su ruta
     const customResponsesPath = createCustomResponseFile(newConfig.name);
     
@@ -183,6 +188,14 @@ function updateConfig(name, updates) {
     
     if (oldName !== newName && configs.find(c => c.name === newName)) {
         throw new Error(`La configuración con nombre "${newName}" ya existe`);
+    }
+    
+    // Si el puerto cambia, validar que no exista ya
+    const oldPort = configs[index].port;
+    const newPort = cleanedUpdates.port || oldPort;
+    
+    if (newPort !== oldPort && configs.find(c => c.port === newPort)) {
+        throw new Error(`Ya existe una configuración usando el puerto ${newPort}`);
     }
     
     // Mezclar: mantener antiguo, sobrescribir solo con nuevos válidos
