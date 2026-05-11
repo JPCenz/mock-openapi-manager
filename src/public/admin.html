@@ -294,12 +294,19 @@
 
     // Configs
     const cfgOut = document.getElementById('cfgOut');
-    document.getElementById('btnLoadConfigs').onclick = async () => {
+    
+    // Función para cargar configuraciones
+    const loadConfigs = async () => {
       const r = await fetch(`${base}/config/`);
       const data = await r.json();
       out(cfgOut, data);
       renderConfigs(data);
     };
+    
+    document.getElementById('btnLoadConfigs').onclick = loadConfigs;
+    
+    // Cargar mocks al iniciar la página
+    window.addEventListener('load', loadConfigs);
     function renderConfigs(json){
       const tbody = document.querySelector('#tblConfigs tbody');
       tbody.innerHTML = '';
