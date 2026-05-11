@@ -131,15 +131,15 @@
           <button id="btnLoadConfigs">Refrescar mocks</button>
           <button id="btnRestartAll" class="secondary">Reiniciar todos 🔄 </button>
         </div>
-        <figure>
+        <figure class="overflow-auto">
           <table id="tblConfigs" role="grid">
             <thead>
               <tr>
-                <th>Nombre</th>
-                <th>Contrato</th>
-                <th>Puerto</th>
-                <th>BasePath</th>
-                <th>Acciones</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Contrato</th>
+                <th scope="col">Puerto</th>
+                <th scope="col">BasePath</th>
+                <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -313,7 +313,7 @@
       const configs = (json && json.data) ? json.data : (Array.isArray(json) ? json : []);
       configs.forEach(c => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${c.name}</td><td>${c.contract}</td><td>${c.port}</td><td>${c.basePath}</td><td><button data-n="${c.name}" class="restart">Reiniciar</button> <button data-n="${c.name}" class="edit">Editar</button></td>`;
+        tr.innerHTML = `<td scope="row">${c.name}</td><td>${c.contract}</td><td>${c.port}</td><td>${c.basePath}</td><td><button data-n="${c.name}" class="restart">Reiniciar</button> <button data-n="${c.name}" class="edit">Editar</button></td>`;
         tbody.appendChild(tr);
       });
       tbody.querySelectorAll('button.restart').forEach(b => b.onclick = async (e)=>{
