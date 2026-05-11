@@ -134,8 +134,16 @@
         <label>
           Response JSON
           <textarea id="crBody" rows="6">{
-  "status": 200,
-  "body": { "id": 99, "name": "Mocked" }
+  "status": 400,
+  "body": 
+	{
+	  "timestamp": "2026-05-08T10:15:30Z",
+	  "status": 404,
+	  "error": "Not Found",
+	  "message": "El recurso solicitado no existe",
+	  "path": "/api/v1/exchange-rate/9999",
+	  "traceId": "a1b2c3d4e5f6"
+	}
 }</textarea>
         </label>
         <div class="btn-group">
@@ -159,14 +167,14 @@
         <button id="btnRestartMock">Reiniciar mock específico</button>
         <div class="btn-group">
           <button id="btnRestartAllMocks" class="secondary">Reiniciar todos los mocks</button>
-          <button id="btnRestartServer" class="contrast">Reiniciar servidor</button>
+
         </div>
         <pre id="rstOut" class="output"></pre>
       </article>
     </div>
   
   <footer class="container">
-    <small>© 2025 jcenzang · <a href="https://github.com/JPCenz/mock-openapi-manager" target="_blank" rel="noopener">GitHub</a> · Ver <a href="/LICENSE" target="_blank" rel="noopener">LICENSE</a></small>
+    <small>© 2025 JPCenz · <a href="https://github.com/JPCenz/mock-openapi-manager" target="_blank" rel="noopener">GitHub</a> · Ver <a href="/LICENSE" target="_blank" rel="noopener">LICENSE</a></small>
   </footer>
 
   <script>
@@ -231,7 +239,7 @@
           document.getElementById('cfgPort').value = config.port;
           document.getElementById('cfgBasePath').value = config.basePath;
           document.getElementById('cfgEnableCR').value = config.enableCustomResponses === true ? 'true' : 'false';
-          document.getElementById('cfgCRPath').value = config.customResponses || '';
+          //document.getElementById('cfgCRPath').value = config.customResponses || '';
           // Scroll al formulario
           document.querySelector('h3').scrollIntoView({ behavior: 'smooth' });
         }
@@ -244,7 +252,7 @@
         port: Number(document.getElementById('cfgPort').value),
         basePath: document.getElementById('cfgBasePath').value,
         enableCustomResponses: document.getElementById('cfgEnableCR').value === 'true',
-        customResponses: document.getElementById('cfgCRPath').value
+        //customResponses: document.getElementById('cfgCRPath').value
       };
       const r = await fetch(`${base}/config/`, { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)});
       out(cfgOut, await r.json());
@@ -256,7 +264,7 @@
         port: Number(document.getElementById('cfgPort').value),
         basePath: document.getElementById('cfgBasePath').value,
         enableCustomResponses: document.getElementById('cfgEnableCR').value === 'true',
-        customResponses: document.getElementById('cfgCRPath').value
+        //customResponses: document.getElementById('cfgCRPath').value
       };
       const r = await fetch(`${base}/config/${encodeURIComponent(name)}`, { method:'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)});
       out(cfgOut, await r.json());
